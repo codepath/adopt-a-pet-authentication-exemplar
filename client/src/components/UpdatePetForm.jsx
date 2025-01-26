@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useUser } from '../contexts/UserContext';
 import '../styles/Forms.css';
 
 const UpdatePetForm = ({ onPetUpdated }) => {
   const { petId } = useParams();
   const navigate = useNavigate();
-  const { user } = useUser();
   const [formData, setFormData] = useState({ name: '', type: '', age: '' });
   const [message, setMessage] = useState('');
 
