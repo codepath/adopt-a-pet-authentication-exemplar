@@ -20,4 +20,13 @@ model Pet {
   name  String  // Name of the pet
   type  String  // Type of the pet (e.g., Dog, Cat)
   age   Int     // Age of the pet
+  userId Int?   // This field allows linking to the User model
+  user   User?  @relation(fields: [userId], references: [id], onDelete: Cascade) // Defines the relationship
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String
+  pets     Pet[]  // Establishes a one-to-many relationship with the Pet model
 }

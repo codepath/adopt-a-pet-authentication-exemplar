@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import WithAuth from './WithAuth'
 import '../styles/Forms.css'
 
 const AddPetForm = ({ onPetAdded }) => {
@@ -8,6 +9,8 @@ const AddPetForm = ({ onPetAdded }) => {
     type: '',
     age: '',
   })
+  const [message, setMessage] = useState(null);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -18,31 +21,35 @@ const AddPetForm = ({ onPetAdded }) => {
     }))
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    fetch('http://localhost:3000/pets', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    })
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
+    // Convert age to integer
+    const formDataWithIntAge = {
+        ...formData,
+        age: parseInt(formData.age, 10)
+    };
 
-      throw new Error('Failed to add pet.')
-    })
-    .then(data => {
-      console.log('Success:', data)
-      onPetAdded()
-    })
-    .catch((error) => {
-      console.error('Error:', error)
-    })
-  }
+    try {
+        const response = await fetch("http://localhost:3000/pets", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formDataWithIntAge),
+            credentials: "include", // Include credentials
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            setMessage({ type: "success", text: "Pet added successfully!" });
+            navigate("/"); // Redirect to the homepage
+        } else {
+            setMessage({ type: "error", text: data.error || "Failed to add pet." });
+        }
+    } catch (error) {
+        setMessage({ type: "error", text: "Network error. Please try again." });
+    }
+};
 
   return (
     <form className="pet-form" onSubmit={handleSubmit}>
@@ -90,4 +97,4 @@ const AddPetForm = ({ onPetAdded }) => {
   )
 }
 
-export default AddPetForm
+export default WithAuth(AddPetForm)

@@ -1,27 +1,41 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import '../styles/NavBar.css'
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useUser } from '../contexts/UserContext';
+import '../styles/NavBar.css'; // Import the CSS file for NavBar
 
-const NavBar = ({ onFilter }) => {
-  const [type, setType] = useState('')
-  const [ageMin, setAgeMin] = useState('')
-  const [ageMax, setAgeMax] = useState('')
+const NavBar = ({ onFilter, handleClearFilters }) => {
+  const { user, setUser } = useUser();
+  const navigate = useNavigate();
+  const [type, setType] = React.useState('');
+  const [ageMin, setAgeMin] = React.useState('');
+  const [ageMax, setAgeMax] = React.useState('');
 
-  const handleFilterSubmit = (e) => {
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/logout', {
+        method: 'POST',
+        credentials: 'include', // Include credentials
+      });
+
+      if (response.ok) {
+        setUser(null); // Clear the user in context
+        navigate('/login'); // Redirect to the login page
+      } else {
+        console.error('Failed to log out');
+      }
+    } catch (error) {
+      console.error('Network error. Please try again.', error);
+    }
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    onFilter({ type, ageMin, ageMax })
-  }
-
-  const handleClearFilters = () => {
-    setType('')
-    setAgeMin('')
-    setAgeMax('')
-    onFilter({ type: '', ageMin: '', ageMax: '' })
-  }
+    onFilter({ type, ageMin, ageMax });
+  };
 
   return (
-    <nav>
-      <form onSubmit={handleFilterSubmit}>
+    <nav className="navbar">
+      <form onSubmit={handleSubmit} className="filter-form">
         <input
           type="text"
           placeholder="Type"
@@ -47,11 +61,30 @@ const NavBar = ({ onFilter }) => {
         <button type="button" onClick={handleClearFilters}>Clear</button>
 
         <Link to="/add-pet">
-          <button>Add Pet</button>
+          <button type="button">Add Pet</button>
         </Link>
       </form>
-    </nav>
-  )
-}
 
-export default NavBar
+      <div className="auth-links">
+        {user ? (
+          <>
+            <span className="welcome-message">Welcome, {user.username}</span>
+            <button type="button" onClick={handleLogout}>Log Out</button>
+          </>
+        ) : (
+          <>
+            <Link to="/signup">
+              <button type="button">Sign Up</button>
+            </Link>
+
+            <Link to="/login">
+              <button type="button">Login</button>
+            </Link>
+          </>
+        )}
+      </div>
+    </nav>
+  );
+};
+
+export default NavBar;

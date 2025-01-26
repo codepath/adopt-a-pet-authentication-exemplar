@@ -1,20 +1,53 @@
 .pet-form {
-    padding: 10px;
-    border-radius: 5px;
     display: flex;
     justify-content: center;
 }
 
-.pet-form label {
-    margin: 10px;
-}
-
-.pet-form input {
-    margin: 10px;
-}
-
-.form-buttons {
+.update-pet-form-container {
     display: flex;
+    flex-direction: column;
     align-items: center;
 }
-  
+
+.update-pet-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+}
+
+.form-fields {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.form-fields label {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.update-pet-form button {
+    margin-top: 20px;
+    align-self: center;
+}
+
+.message {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}

@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PetCard from './PetCard'
 import '../styles/Pets.css'
+import React from 'react';
+import { useUser } from '../contexts/UserContext';
 
 const PetsList = ({ filters }) => {
   const [pets, setPets] = useState([])
   const [error, setError] = useState('')
   const navigate = useNavigate()
+  const { user } = useUser();
+  const isAuthenticated = !!user;
 
   useEffect(() => {
     const queryParams = new URLSearchParams({
@@ -63,6 +67,7 @@ const PetsList = ({ filters }) => {
           pet={pet}
           onUpdate={() => handleUpdate(pet.id)}
           onDelete={() => handleDelete(pet.id)}
+          isAuthenticated={isAuthenticated}
         />
       ))}
     </div>
